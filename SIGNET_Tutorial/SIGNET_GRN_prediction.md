@@ -96,7 +96,7 @@ as input and exports the
 
 #### 3.1.1 MLP training and accuracy curve
 
-First, conduct the `SIGNET.py` file. The user should give the pathway where the scRNA-seq data matrix stored and the pathway that the output files will be stored. Assume a fake pathway: ./home/test and all files needed are stored in the `test` file folder.  
+First, conduct the `SIGNET.py` file. The user should give the pathway where the scRNA-seq data matrix stored and the pathway that the output files will be stored. Assume a fake pathway: ./home/test and all files needed are stored in the `test` file folder (including your TF files).  
 
 ``` 
 ## On Linux server 
