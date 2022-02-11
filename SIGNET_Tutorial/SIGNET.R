@@ -131,8 +131,8 @@ gESD.test <- function(x,alpha=0.05,iteration){
 
 
 # merge
-Merge <- function(ac_ntf,ac_tf,gene_ntf,gene_tf){
-  coexpressed <- rbind(ac_ntf,ac_tf)
+Merge <- function(ac_ntf,ac_tf,gene_ntf,gene_tf,gene){
+    coexpressed <- rbind(ac_ntf,ac_tf)
     coexpressed <- coexpressed[,-dim(coexpressed)[2]]
     gene_ntf <- as.character(gene_ntf[,2])
     gene_tf <- as.character(gene_tf[,2])
@@ -140,6 +140,10 @@ Merge <- function(ac_ntf,ac_tf,gene_ntf,gene_tf){
     rownames(coexpressed) <- gene_total
     colnames(coexpressed) <- gene_tf
     coexpressed <- t(coexpressed)
+    gene_total<-gene_total[gene_total%in%gene]
+    coexpressed<-coexpressed[,gene_total]
+    gene_tf<-gene_tf[gene_tf%in%gene]
+    coexpressed<-coexpressed[gene_tf,]
     return(coexpressed)
 }
 
