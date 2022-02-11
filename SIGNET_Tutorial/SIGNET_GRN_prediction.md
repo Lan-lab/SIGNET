@@ -152,13 +152,21 @@ source("SIGNET.R")
 In order to obtain the final predicted co-expressed TF-NTF pairs, users need copy the `co_fc.txt`, `co_tf_fc.txt`, `gene_tf.csv` and `gene_ntf.csv` to the work catalogue. 
 
 ```R
+# Load RcisTarget package if not
+library(RcisTarget)
+# Load gene sets to analyze, i.e the 'genesets' obtained in last step
+# Select motif database to use (annotations)
+data(motifAnnotations_mgi)
+# Import the motif databases for RcisTarget
+motifRankings <- importRankings("mm9-tss-centered-10kb-7species.mc9nr.feather")
+gene <- colnames(motifRankings)
 # Load data
 ac_ntf <- read.table("co_fc.txt")
 ac_tf <- read.table("co_tf_fc.txt")
 gene_ntf <- read.csv("gene_ntf.csv")
 gene_tf <- read.csv("gene_tf.csv")
 # Merge data
-coexpressed <- Merge(ac_ntf,ac_tf,gene_ntf,gene_tf)
+coexpressed <- Merge(ac_ntf,ac_tf,gene_ntf,gene_tf,gene)
 # gESD test and outliers screening
 O <- Screen(coexpressed)
 # Transform to gene list
@@ -209,13 +217,6 @@ For simplicity, we only show a mouse example below. For other species, the codes
 #### 3.2.2 Using RcisTarget
 
 ```R
-# Load RcisTarget package if not
-library(RcisTarget)
-# Load gene sets to analyze, i.e the 'genesets' obtained in last step
-# Select motif database to use (annotations)
-data(motifAnnotations_mgi)
-# Import the motif databases for RcisTarget
-motifRankings <- importRankings("mm9-tss-centered-10kb-7species.mc9nr.feather")
 # Motif enrichment analysis
 Regulons <- Prune(O, genesets, genesets_list, motifRankings, motifAnnotations_mgi)
 copaired2 <- Copaired2(Regulons)
