@@ -10,12 +10,13 @@ SIGNET (Single-cell RNA-seq-based Gene Regulatory Network Prediction using Multi
 
 * Python:  PyTorch, Scanpy
 *     the version of packages:
-*     scanpy         --1.7.2
+      scanpy         --1.7.2
       scikit-learn   --0.23.2
       torch          --1.5.0+cpu
       numpy          --1.19.5              
       pandas         --1.1.5
       torchvision    --0.6.0+cpu
+
 * R:  RcisTarget, AUCell
 
 
