@@ -1,3 +1,8 @@
+##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+# This file contains the necessary R functions for SIGNET.
+# The provided functions include: Binary, Copaired, Copaired2, 
+# Genesets, gESD.test, Merge, Screen, Prune, and AUCellMatrix.
+##### ##### ##### ##### ##### ##### ##### ##### ##### #####
 # Binarization 
 Binary <- function(data_auc,threshold){l
   Binary_auc<- as.data.frame(matrix(0,dim(data_auc[1]),dim(data_auc)[2]))
@@ -18,7 +23,7 @@ Binary <- function(data_auc,threshold){l
   return(Binary_auc)
 }
 
-
+# Transform outlier matirx into coexpressed relation table
 Copaired <- function(Outlier){
   copaired <- data.frame()
   num = 1
@@ -35,7 +40,6 @@ Copaired <- function(Outlier){
   print(num)
   return(copaired)
 }
-
 
 Copaired2 = function(Regulon){
   copaired2 <- data.frame()
@@ -54,8 +58,7 @@ Copaired2 = function(Regulon){
   return(copaired2)
 }
 
-
-
+# Transform coexpressed relation table into geneset table
 Genesets <- function(copaired){
   genesets_list <- levels(as.factor(copaired$V1))
   genesets= as.data.frame(matrix(nrow=length(genesets_list),ncol=1))
@@ -66,7 +69,6 @@ Genesets <- function(copaired){
   colnames(genesets)="gene_list"
   return (genesets)
 }
-
 
 # gESD.test version 3.0
 gESD.test <- function(x,alpha=0.05,iteration){
@@ -129,7 +131,6 @@ gESD.test <- function(x,alpha=0.05,iteration){
   return(RVAL)
 }
 
-
 # merge
 Merge <- function(ac_ntf,ac_tf,gene_ntf,gene_tf,gene){
     coexpressed <- rbind(ac_ntf,ac_tf)
@@ -147,7 +148,7 @@ Merge <- function(ac_ntf,ac_tf,gene_ntf,gene_tf,gene){
     return(coexpressed)
 }
 
-# screen
+# screen for outlier
 Screen <- function(coexpressed,factor=0.3,alpha=0.05,ntop=30){
   O <- as.data.frame(matrix(0, nrow = dim(coexpressed)[1], ncol = dim(coexpressed)[2]))
     rownames(O) <- rownames(coexpressed)
@@ -169,7 +170,6 @@ Screen <- function(coexpressed,factor=0.3,alpha=0.05,ntop=30){
     return(O)
 }
 
-
 # Pruning
 Prune <- function(outlier,genesets,genesets_list,motifRankings,motifAnnot){
   Regulons <- as.data.frame(matrix(0,dim(outlier)[1],dim(outlier)[2]))
@@ -177,7 +177,6 @@ Prune <- function(outlier,genesets,genesets_list,motifRankings,motifAnnot){
   colnames(Regulons) <- colnames(outlier)
   ntf_gene <- colnames(outlier)
   tf_gene <- rownames(outlier)
-
 
   num <- 0
   for (q in 1:length(genesets_list)) {
@@ -225,7 +224,7 @@ Prune <- function(outlier,genesets,genesets_list,motifRankings,motifAnnot){
         for(k in 1:length(str3)){
           n <- which(ntf_gene%in%str3[k])
           if(length(n)!=0){
-            if(O[index,n]==1){
+            if(outlier[index,n]==1){
               Regulons[index,n] <- 1
               num <- num + 1
             }
@@ -248,7 +247,7 @@ Prune <- function(outlier,genesets,genesets_list,motifRankings,motifAnnot){
         for(k in 1:length(str3)){
           n <- which(ntf_gene%in%str3[k])
           if(length(n)!=0){
-            if(O[index,n]==1){
+            if(outlier[index,n]==1){
               Regulons[index,n] <- 1
               num <- num + 1
             }
@@ -262,7 +261,6 @@ Prune <- function(outlier,genesets,genesets_list,motifRankings,motifAnnot){
   }
   return(Regulons)
 }
-
 
 # auc score
 AUCellMatrix <- function(data,genesets,genesets_list){
@@ -283,3 +281,4 @@ AUCellMatrix <- function(data,genesets,genesets_list){
     return(data_auc)
 }
 
+# End of 'SIGNET.R'.
