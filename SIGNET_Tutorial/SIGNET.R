@@ -71,7 +71,7 @@ Genesets <- function(copaired){
   if (dim(genesets)[1] == 0){
     print('All genesets contain only one gene. No effective genesets generated.')
   }
-  return (genesets)
+  return(genesets)
 }
 
 # gESD.test version 3.0
