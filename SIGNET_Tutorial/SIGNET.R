@@ -67,6 +67,10 @@ Genesets <- function(copaired){
   }
   rownames(genesets)=genesets_list
   colnames(genesets)="gene_list"
+  genesets = genesets[grepl(',',genesets$gene_list),]
+  if (dim(genesets)[1] == 0){
+    print('All genesets contain only one gene. No effective genesets generated.')
+  }
   return (genesets)
 }
 
@@ -171,20 +175,22 @@ Screen <- function(coexpressed,factor=0.3,alpha=0.05,ntop=30){
 }
 
 # Pruning
-Prune <- function(outlier,genesets,genesets_list,motifRankings,motifAnnot){
+Prune <- function(outlier,genesets,motifRankings,motifAnnot,species=c('Homo sapiens','Mus musculus','Drosophila melanogaster')){
   Regulons <- as.data.frame(matrix(0,dim(outlier)[1],dim(outlier)[2]))
   rownames(Regulons) <- rownames(outlier)
   colnames(Regulons) <- colnames(outlier)
   ntf_gene <- colnames(outlier)
   tf_gene <- rownames(outlier)
 
+  genesets_list = rownames(genesets)
+
   num <- 0
   for (q in 1:length(genesets_list)) {
   tf_name <- rownames(genesets)[q]
-  index <- which(tf_gene%in%tf_name)
-  # print(tf_name)
+  index <- which(tf_gene %in% tf_name)
   genelist <- unlist(strsplit(genesets[q,],split=","))
   motifEnrichmentTable_wGenes <- cisTarget(genelist, motifRankings, motifAnnot=motifAnnot)
+
   # Transform RcisTarget data to data.frame
   if(!is.null(motifEnrichmentTable_wGenes$TF_highConf)){
     TF_hlists <- strsplit(motifEnrichmentTable_wGenes$TF_highConf,split = ";")
@@ -204,7 +210,10 @@ Prune <- function(outlier,genesets,genesets_list,motifRankings,motifAnnot){
   else{
     regulated_gene <- NULL
   }
-  for (i in 1:length(TF_hlists)){
+
+ # Generate regulons according to species
+ if (species == 'Mus musculus'){
+   for (i in 1:length(TF_hlists)){
     str1 <- TF_hlists[[i]]
     str2 <- TF_llists[[i]]
     str3 <- regulated_gene[[i]]
@@ -255,6 +264,62 @@ Prune <- function(outlier,genesets,genesets_list,motifRankings,motifAnnot){
         }
       }
     }
+  }
+  }
+
+ if (species == 'Homo sapiens' | species == 'Drosophila melanogaster'){
+   for (i in 1:length(TF_hlists)){
+    str1 <- TF_hlists[[i]]
+    str2 <- TF_llists[[i]]
+    str3 <- regulated_gene[[i]]
+    str3 <- unique(str3)
+    if(length(str1) > 0){
+      str1 <- gsub("\\(.*\\)","",str1)
+      str1 <- gsub("\\.","",str1)
+      str1 <- gsub(" ","",str1)
+#      str1 <- tolower(str1)
+#      for(i in 1:length(str1)){
+#        str <- unlist(strsplit(str1[i],""))
+#        str[1] <- toupper(str[1])
+#        str <- paste(str,collapse = "")
+#        str1[i] <- str
+#      }
+      if(tf_name %in% str1){
+        for(k in 1:length(str3)){
+          n <- which(ntf_gene%in%str3[k])
+          if(length(n)!=0){
+            if(outlier[index,n]==1){
+              Regulons[index,n] <- 1
+              num <- num + 1
+            }
+          }
+        }
+      }
+    }
+    if(length(str2)>0){
+      str2 <- gsub("\\(.*\\)","",str2)
+      str2 <- gsub("\\.","",str2)
+      str2 <- gsub(" ","",str2)
+      str2 <- tolower(str2)
+      for(i in 1:length(str2)){
+        str <- unlist(strsplit(str2[i],""))
+        str[1] <- toupper(str[1])
+        str <- paste(str,collapse = "")
+        str2[i] <- str
+      }
+      if(tf_name %in% str2){
+        for(k in 1:length(str3)){
+          n <- which(ntf_gene%in%str3[k])
+          if(length(n)!=0){
+            if(outlier[index,n]==1){
+              Regulons[index,n] <- 1
+              num <- num + 1
+            }
+          }
+        }
+      }
+    }
+  }
   }
   print(num)
   print(q)
