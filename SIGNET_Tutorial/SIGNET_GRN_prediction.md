@@ -183,7 +183,7 @@ genesets <- Genesets(copaired)
 genesets_list <- levels(as.factor(copaired$V1))
 ```
 
-Thus we obtain the co-expressed TF-NTF pairs.
+Thus we obtain the co-expressed TF-NTF pairs. However, if all gene lists only contain one gene, there will be no effective genesets generated.
 
 ### 3.2 Pruning using RcisTarget
 
@@ -226,7 +226,9 @@ For simplicity, we only show a mouse example below. For other species, the codes
 
 ```R
 # Motif enrichment analysis
-Regulons <- Prune(O, genesets, genesets_list, motifRankings, motifAnnotations_mgi)
+# Three species selections are available: 'Homo sapiens','Mus musculus','Drosophila melanogaster'
+# Choose right selection during analysis
+Regulons <- Prune(O, genesets, motifRankings, motifAnnotations_mgi, species = 'Mus musculus')
 copaired2 <- Copaired2(Regulons)
 genesets2 <- Genesets(copaired2)
 genesets_list2 <- levels(as.factor(copaired2$V1))
